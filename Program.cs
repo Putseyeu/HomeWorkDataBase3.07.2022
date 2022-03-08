@@ -56,7 +56,7 @@ namespace DataBasePlayer3._0List
                     {
                         if (TryGetPlayer(out Player player, out int index))
                         {
-                            _users.RemoveAt(index);                           
+                            _users.Remove(player);                           
                         }
                     }
                     else
@@ -116,6 +116,7 @@ namespace DataBasePlayer3._0List
                     intValue--;
                     if (intValue < _users.Count && intValue >= 0)
                     {
+                        player = _users[intValue];
                         index = intValue;
                         return true;
                     }
@@ -209,16 +210,14 @@ namespace DataBasePlayer3._0List
             return Banned;
         }
 
-        private bool AppoinStatusBan()
+        private void AppoinStatusBan()
         {
             Banned = true;
-            return Banned;
         }
         
-        private bool AppoinStatusUnban()
+        private void AppoinStatusUnban()
         {
-            Banned = false;
-            return Banned;
+            Banned = false;            
         }
     }
 }
