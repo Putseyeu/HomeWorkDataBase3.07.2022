@@ -54,7 +54,7 @@ namespace DataBasePlayer3._0List
                 {
                     if (_users.Count > 0)
                     {
-                        if (TryGetPlayer(out Player player, out int index))
+                        if (TryGetPlayer(out Player player))
                         {
                             _users.Remove(player);                           
                         }
@@ -70,9 +70,9 @@ namespace DataBasePlayer3._0List
             {
                 if (_users.Count > 0)
                 {
-                    if (TryGetPlayer(out Player player, out int index))
+                    if (TryGetPlayer(out Player player))
                     {
-                        _users[index].InputStatusBanned();
+                        player.InputStatusBanned();
                     }
                 }
                 else
@@ -106,7 +106,7 @@ namespace DataBasePlayer3._0List
                 }
             }
 
-            private bool TryGetPlayer(out Player player, out int index)
+            private bool TryGetPlayer(out Player player)
             {
                 player = null;
                 Console.WriteLine("Введите порядковый номер игрока");
@@ -116,22 +116,19 @@ namespace DataBasePlayer3._0List
                     intValue--;
                     if (intValue < _users.Count && intValue >= 0)
                     {
-                        player = _users[intValue];
-                        index = intValue;
+                        player = _users[intValue];                        
                         return true;
                     }
                     else
                     {
-                        Console.WriteLine($"Игрок с порядковым номером {intValue + 1} отсутствует.");
-                        index = 0;
+                        Console.WriteLine($"Игрок с порядковым номером {intValue + 1} отсутствует.");                       
                         return false;
                     }
                 }
                 else
                 {
                     Console.WriteLine("Не верный порядковый номер игрока");
-                }
-                index = 0;
+                }                
                 return false;
             }
         }
@@ -187,7 +184,7 @@ namespace DataBasePlayer3._0List
             Level = intValue;
         }
 
-        public bool InputStatusBanned()
+        public void InputStatusBanned()
         {            
             bool completed = false;
             string userInput;
@@ -207,9 +204,8 @@ namespace DataBasePlayer3._0List
                     completed = true;
                 }
             }
-            return Banned;
         }
-
+        
         private void AppoinStatusBan()
         {
             Banned = true;
