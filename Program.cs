@@ -16,7 +16,7 @@ namespace DataBasePlayer3._0List
             {
                 Console.WriteLine("База данных игроков. Выберите действие.");
                 Console.WriteLine(" 1 - Добавить игрока.\n 2 - Удалить игрока.\n 3 - Изменить статус игрока.\n" +
-                    " 4 - Список игроков.\n 5 - Выйти из базы данных. ");
+                    " 4 - Список игроков.\n 5 - Выйти из базы данных.");
                 userInput = Console.ReadLine();
                 switch (userInput)
                 {
@@ -44,11 +44,6 @@ namespace DataBasePlayer3._0List
         {
             private List<Player> _users = new List<Player>();
 
-            public DataBase()
-            {
-
-            }
-
             public void AddPlayer()
             {
                 _users.Add(new Player());
@@ -59,23 +54,9 @@ namespace DataBasePlayer3._0List
                 {
                     if (_users.Count > 0)
                     {
-                        Console.WriteLine("Введите порядковый номер игрока для удаления из базы данных");
-                        string indexPlayer = Console.ReadLine();
-                        if (int.TryParse(indexPlayer, out int intValue))
+                        if (TryGetPlayer(out Player player, out int index))
                         {
-                            intValue--;
-                            if (intValue < _users.Count && intValue >= 0)
-                            {
-                                _users.Remove(_users[intValue]);
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Игрок с порядковым номером {intValue + 1} отсутствует.");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Не верный порядковый номер игрока");
+                            _users.RemoveAt(index);                           
                         }
                     }
                     else
@@ -89,23 +70,9 @@ namespace DataBasePlayer3._0List
             {
                 if (_users.Count > 0)
                 {
-                    Console.WriteLine("Введите порядковый номер игрока");
-                    string indexPlayer = Console.ReadLine();
-                    if (int.TryParse(indexPlayer, out int intValue))
+                    if (TryGetPlayer(out Player player, out int index))
                     {
-                        intValue--;
-                        if (intValue < _users.Count && intValue >= 0)
-                        {
-                            _users[intValue].InputStatusBanned();
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Игрок с порядковым номером {intValue + 1} отсутствует.");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Не верный порядковый номер игрока");
+                        _users[index].InputStatusBanned();
                     }
                 }
                 else
@@ -138,83 +105,121 @@ namespace DataBasePlayer3._0List
                     Console.WriteLine("База данных не заполнена.");
                 }
             }
+
+            private bool TryGetPlayer(out Player player, out int index)
+            {
+                player = null;
+                Console.WriteLine("Введите порядковый номер игрока");
+                string indexPlayer = Console.ReadLine();
+                if (int.TryParse(indexPlayer, out int intValue))
+                {
+                    intValue--;
+                    if (intValue < _users.Count && intValue >= 0)
+                    {
+                        index = intValue;
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Игрок с порядковым номером {intValue + 1} отсутствует.");
+                        index = 0;
+                        return false;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Не верный порядковый номер игрока");
+                }
+                index = 0;
+                return false;
+            }
+        }
+    }
+
+    class Player
+    {
+        private int _minLevel = 1;
+        private int _maxLevel = 99;
+
+        public bool Banned { get; private set; }
+        public string Name { get; private set; }
+        public int Level { get; private set; }
+
+        public Player()
+        {
+            InputName();
+            InputLevel(_minLevel, _maxLevel);
+            InputStatusBanned();
         }
 
-        class Player
+        private void InputName()
         {
-            private int _minLevel = 1;
-            private int _maxLevel = 99;
+            Console.WriteLine("Внесите никнейм для игрока");
+            Name = Console.ReadLine();
+        }
 
-            public bool Banned { get; private set; }
-            public string Name { get; private set; }
-            public int Level { get; private set; }
+        private void InputLevel(int minLevel, int maxLevel)
+        {
+            bool completed = false;
+            int intValue = 0;
+            Console.WriteLine($"Укажите уровень игрока  от {minLevel} до {maxLevel}");
 
-            public Player()
+            while (completed == false)
             {
-                InputName();
-                InputLevel(_minLevel, _maxLevel);
-                InputStatusBanned();
-            }
-
-            private string InputName()
-            {
-                Console.WriteLine("Внесите никнейм для игрока");
-                Name = Console.ReadLine();
-                return Name;
-            }
-
-            private int InputLevel(int minLevel, int maxLevel)
-            {
-                bool completed = false;
-                int intValue = 0;
-                Console.WriteLine($"Укажите уровень игрока  от {minLevel} до {maxLevel}");
-
-                while (completed == false)
+                string userInput = Console.ReadLine();
+                if (int.TryParse(userInput, out intValue))
                 {
-                    string userInput = Console.ReadLine();
-                    if (int.TryParse(userInput, out intValue))
+                    if (intValue >= minLevel && intValue <= maxLevel)
                     {
-                        if (intValue >= minLevel && intValue <= maxLevel)
-                        {
-                            completed = true;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Не верный ввод значения.Введите целое число от {minLevel} до {maxLevel}.");
-                        }
+                        completed = true;
                     }
                     else
                     {
                         Console.WriteLine($"Не верный ввод значения.Введите целое число от {minLevel} до {maxLevel}.");
                     }
                 }
-                Level = intValue;
-                return Level;
-            }
-
-            public bool InputStatusBanned()
-            {
-                Banned = false;
-                bool completed = false;
-                string userInput;
-
-                while (completed == false)
+                else
                 {
-                    Console.WriteLine("Установите статус игрока.\n 1 - Заблокированый игрок.\n 2 - Разблокированый игрок.");
-                    userInput = Console.ReadLine();
-                    if (userInput == "1")
-                    {
-                        Banned = true;
-                        completed = true;
-                    }
-                    else if (userInput == "2")
-                    {
-                        Banned = false;
-                        completed = true;
-                    }
+                    Console.WriteLine($"Не верный ввод значения.Введите целое число от {minLevel} до {maxLevel}.");
                 }
-                return Banned;
             }
+            Level = intValue;
+        }
+
+        public bool InputStatusBanned()
+        {            
+            bool completed = false;
+            string userInput;
+
+            while (completed == false)
+            {
+                Console.WriteLine("Установите статус игрока.\n 1 - Заблокированый игрок.\n 2 - Разблокированый игрок.");
+                userInput = Console.ReadLine();
+                if (userInput == "1")
+                {
+                    AppoinStatusBan();
+                    completed = true;
+                }
+                else if (userInput == "2")
+                {
+                    AppoinStatusUnban();
+                    completed = true;
+                }
+            }
+            return Banned;
+        }
+
+        private bool AppoinStatusBan()
+        {
+            Banned = true;
+            return Banned;
+        }
+        
+        private bool AppoinStatusUnban()
+        {
+            Banned = false;
+            return Banned;
         }
     }
 }
+
